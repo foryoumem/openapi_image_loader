@@ -1,19 +1,14 @@
-import {getImageList} from "./server.js"
-import {layoutImageList} from "./layout.js"
-import {} from "./server.js"
+import {getData} from "./server.js"
 
 
 const host = "http://localhost:5500"
 const mainUrl = host + "/main.html"
 const infoUrl = host + "/info.html"
 
-const MAX_PAGE = 5
-const MAX_IMAGE = 5
-
 export class PageNumOption
 {
-    maxPage = MAX_PAGE
-    href = mainUrl 
+    maxPage = 5
+    href = mainUrl
 }
 
 export class ImageItemOption
@@ -24,76 +19,59 @@ export class ImageItemOption
 
 export class ImageListOption
 {
-    pageNum = 0
     itemOptions = []
+    width = 200
+    maxImageNum = 5
 }
 
-export function pageButton()
+export class imageInfoOption
 {
-    return (event) =>
-    {
-        console.log(event.target.value)
-        
-        const imageList = getImageList()
-       // const params = new URL(location.href).searchParams;
-        //const getPageNum = params.get('page');
-
-        // 현재 누른 페이지를 저장
-        const pageNum = event.target.value
-
-        const options = new ImageListOption()
-        options.pageNum = pageNum
-
-        // 만약 한 페이지당 불러오는 이미지가 5개(maxImage)면,
-        // 1페이지 0~4, 2페이지 5~9 
-        const startNum = (pageNum - 1) * MAX_IMAGE
-        const endNum = pageNum * MAX_IMAGE
-        for (let i = startNum; i < endNum; i++)
-        {
-            const id = imageList[i].id
-            const download_url = imageList[i].download_url
-            
-            const itemOptions = new ImageItemOption()
-            itemOptions.src = download_url
-            itemOptions.href = infoUrl + '?id=' + id
-            
-            
-            options.itemOptions.push(itemOptions)
-        }
-
-        const page = layoutImageList(options)
-    }
-
-    /*
-    버튼을 누르면 이미지 pagePerMaxImage 값만큼 나온다.
-    현재 페이지는 host:port/main.html?page=1 이런식으로 한다.
-    */
+    id = 0
+    src = ""
+    author = ""
+    size = 0
 }
 
-export async function getCurrentPageOption()
+export function getParamValue(param)
 {
-    // 현재 누른 페이지를 저장
     const location = document.location
     const url = new URL(location.href)
-    const pageNum = url.searchParams.get('page')
+
+    return url.searchParams.get(param)
+}
+
+/*
+Open api에서 이미지를 받아서 ImageItemOption 객체를 담은 배열을 반환
+1. Open api URL
+2. 웹페이지에 표시되는 최대 이미지 갯수
+*/
+export async function getImageItemOption(url, maxImageNum = 5)
+{
+    // URL에 저장된 page 파라미터
+    const currentPage = getParamValue('page')
+
+    // 표시되는 이미지 갯수
+    const imageNum = maxImageNum
 
     // 페이지 번호를 받을 수 없는 경우(메인 페이지)
-    if (pageNum == undefined)
+    if (currentPage == undefined)
     {
-        pageNum = 1
+        currentPage = 1
     }
 
-    const imageList = await getImageList()
+    const imageList = await getData(url)
 
-     const options = new ImageListOption()
-     options.pageNum = pageNum
+    // 여기에 ImageItem을 만들때 필요한 option을 추가
+    const options = []
 
-     // 만약 한 페이지당 불러오는 이미지가 5개(maxImage)면,
+     // 만약 한 페이지당 불러오는 이미지가 5개(imageNum)면,
      // 1페이지 0~4, 2페이지 5~9 
-     const startNum = (pageNum - 1) * MAX_IMAGE
-     const endNum = pageNum * MAX_IMAGE
-     for (let i = startNum; i < endNum; i++)
+     const start = (currentPage - 1) * imageNum
+     const end = currentPage * imageNum
+     for (let i = start; i < end; i++)
      {
+         if (i >= imageList.length) break
+
          const id = imageList[i].id
          const download_url = imageList[i].download_url
          
@@ -101,8 +79,27 @@ export async function getCurrentPageOption()
          itemOptions.src = download_url
          itemOptions.href = infoUrl + '?id=' + id
          
-         options.itemOptions.push(itemOptions)
+         options.push(itemOptions)
     }
     
+    return options
+}
+
+
+export async function getImageInfoOption(url)
+{
+     // URL에 저장된 id 파라미터
+    const currentId = getParamValue('id')
+    
+    // url = https://picsum.photos/id
+    // info = https://picsum.photos/id/${id}/info
+    const imageInfo = await getData(url + `/${currentId}/info`)
+
+    const options = new imageInfoOption()
+    options.id = currentId
+    options.src = imageInfo.download_url
+    options.author = imageInfo.author
+    options.size = imageInfo.width + 'x' + imageInfo.height
+
     return options
 }

@@ -1,10 +1,8 @@
-const imageURL = "https://picsum.photos/v2/list"
-
-export async function getImageList()
+export async function getData(url)
 { 
     let list = {}
 
-    await fetch(imageURL)
+    await fetch(url)
         .then(response => response.json())
         .then(data =>
         {

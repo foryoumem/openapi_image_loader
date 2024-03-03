@@ -1,4 +1,4 @@
-import {createAnchor, createImage, createImageItem, createImageListRoute, createPageNum, createPageNumRoute, createPageNumAnchor} from "./element.js"
+import {createAnchor, createImage, createImageItem, createImageListRoute, createPageNum, createPageNumRoute, createPageNumAnchor, createImageInfoRoute, createImageInfoHeader, createImageInfoImage, createImageInfoText} from "./element.js"
 
 export function layoutImageItem(options)
 {
@@ -30,12 +30,9 @@ export function layoutPageNum(options)
     return route
 }
 
-
 export function layoutImageList(options)
 {
-    // 이미지 URL 객체가 들어있음
     const itemOptions = options.itemOptions
-    console.log(itemOptions)
 
     const route = createImageListRoute()
 
@@ -44,6 +41,22 @@ export function layoutImageList(options)
         const item = layoutImageItem(iter)
         route.appendChild(item)
     })
+
+    return route
+}
+
+export function layoutImageInfo(options)
+{
+    const header = createImageInfoHeader('이미지 정보')
+    const image = createImageInfoImage(options.src)
+    const author = createImageInfoText(options.author)
+    const size = createImageInfoText(options.size)
+
+    const route = createImageInfoRoute()
+    route.appendChild(header)
+    route.appendChild(image)
+    route.appendChild(author)
+    route.appendChild(size)
 
     return route
 }

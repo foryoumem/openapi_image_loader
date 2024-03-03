@@ -58,3 +58,38 @@ export function createPageNumRoute()
 
     return div
 }
+
+export function createImageInfoRoute()
+{
+    const div = document.createElement('div')
+    div.className = 'image_info_route'
+
+    return div
+}
+
+export function createImageInfoHeader(text)
+{
+    const header = document.createElement('h1')
+    header.innerText = text
+    header.className = 'image_info_header'
+
+    return header
+}
+
+export function createImageInfoImage(src)
+{
+    const image = document.createElement('img')
+    image.src = src
+    image.className = 'image_info_image'
+
+    return image
+}
+
+export function createImageInfoText(text)
+{
+    const div = document.createElement('div')
+    div.innerText = text
+    div.className = 'image_info_text'
+
+    return div
+}
