@@ -8,7 +8,9 @@ async function run()
 {
     // 이미지의 width, height, page per max image
     //generateImageList(300, "auto", 5)
-    
+    const imageList = await generateImageList(1, 1, 1)
+    body.appendChild(imageList)
+
     // 1. 페이지는 최대 5개
     // 2. 이미지가 5개 초과하면 페이지를 하나씩 추가한다.
     const pageButton = generatePageButton(5, 5)

@@ -1,7 +1,8 @@
-export function createImage(src)
+export function createImage(src, width=200)
 {
     const image = document.createElement('img')
     image.src = src
+    image.width = width
     image.className = "image_src"
 
     return image
@@ -32,21 +33,28 @@ export function createImageListRoute()
     return div
 }
 
-export function createPageButton(event, value)
+export function createPageNum(value)
 {
-    const button = document.createElement('button')
-    button.innerText = value
-    button.value = value
-    button.addEventListener('click', event)
-    button.className = 'page_button'
+    const conv = document.createElement('conv')
+    conv.innerText = value
+    conv.className = 'page_num'
 
-    return button
+    return conv
 }
 
-export function createPageeButtonRoute()
+export function createPageNumAnchor(href)
+{
+    const anchor = document.createElement('a')
+    anchor.href = href
+    anchor.className = 'page_anchor'
+
+    return anchor
+}
+
+export function createPageNumRoute()
 {
     const div = document.createElement('div')
-    div.className = 'page_button_route'
+    div.className = 'page_num_route'
 
     return div
 }

@@ -1,19 +1,21 @@
-import {layoutPageButton, layoutImageList} from "./layout.js"
-import {PageButtonOption} from "./event.js"
+import {layoutImageList, layoutPageNum} from "./layout.js"
+import {PageNumOption, getCurrentPageOption} from "./event.js"
 
 
 
-export function generateImageList(width, height, pagePerMaxImageNum)
+export async function generateImageList(width, height, pagePerMaxImageNum)
 {
+    const options = await getCurrentPageOption()
+    const route = layoutImageList(options)
+
     return route
 }
 
 
 export function generatePageButton(maxPage, pagePerMaxItem)
 {
-    const options = new PageButtonOption()
-
-    const route = layoutPageButton(options)
+    const options = new PageNumOption()
+    const route = layoutPageNum(options)
 
     return route
 }
